@@ -1,13 +1,15 @@
 # DimDim – Clientes e Contas na Azure (CP5)
 
-**Grupo:** _< >_ | **Integrantes:** _<Samara Porto rm-559072  & Maria Gabriela Landim rm-  >_
+**Grupo:** _<Dimdim>_ | **Integrantes:** _<Samara Porto rm-559072  & Maria Gabriela Landim rm-565146>_
 **Vídeo:** _<link>_ | **App:** _https://<app>.azurewebsites.net_
 
 ## 1. Descrição da solução
 Aplicação web **Java 17 / Spring Boot (MVC + Thymeleaf)** para a DimDim gerenciar **Clientes** e suas **Contas** (N:1), com CRUD completo nas duas tabelas. Dados em **Azure SQL Database (PaaS)**; hospedagem no **Azure App Service (Linux, Java 17)**; monitoramento com **Application Insights**; senha do banco no **Key Vault** (Key Vault reference) e demais configurações em **App Settings**; deploy com **Azure CLI + GitHub Actions**.
 
 ## 2. Arquitetura
-![Arquitetura](docs/arquitetura.png)
+
+![Arquitetura da solução](docs/arquitetura.png)
+
 _Usuário → App Service → Azure SQL; App Service → Key Vault (Managed Identity); App Service → Application Insights; GitHub Actions → App Service._
 
 ## 3. Estrutura
