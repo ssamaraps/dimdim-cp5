@@ -1,6 +1,6 @@
 # DimDim – Clientes e Contas na Azure (CP5)
 
-**Grupo:** _<Dimdim>_ | **Integrantes:** _<Samara Porto rm-559072  & Maria Gabriela Landim rm-565146>_
+**Grupo:** _<Dimdim>_ | **Integrantes:** Samara Porto rm-559072  & Maria Gabriela Landim rm-565146 
 **Vídeo:** _<link>_ | **App:** _https://<app>.azurewebsites.net_
 
 ## 1. Descrição da solução
