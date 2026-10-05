@@ -6,7 +6,7 @@
 |---|---|
 | **Grupo** | `Gabi e Samara` |
 | **Integrantes** | Samara Porto – RM559072 · Maria Gabriela Landim Severo – RM565146 |
-| **Vídeo** | `PREENCHER_LINK_DO_VIDEO` |
+| **Vídeo** | https://www.youtube.com/watch?v=8H3uaIORxLU |
 | **Aplicação** | https://app-dimdim-13408.azurewebsites.net/clientes |
 
 ---
