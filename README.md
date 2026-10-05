@@ -83,7 +83,7 @@ chmod +x *.sh ../mvnw
 ```
 O script **pede o usuário e a senha** do banco no terminal (a senha não aparece na tela e não fica salva em arquivo) e cria:
 
-1. Resource Group `rg-dimdim-cp5` (Brazil South);
+1. Resource Group `rg-dimdim-cp5-eus` (região East US);
 2. Azure SQL Server + Database `dimdimdb` (tier Basic) e regras de firewall;
 3. Log Analytics + Application Insights `ai-dimdim`;
 4. App Service Plan B1 Linux + Web App Java 17;
@@ -156,5 +156,5 @@ Monitoramento do banco também no próprio **Azure SQL Database → Monitorament
 
 ## 9. Limpeza dos recursos
 ```bash
-az group delete -n rg-dimdim-cp5 --yes --no-wait
+az group delete -n rg-dimdim-cp5-eus --yes --no-wait
 ```
