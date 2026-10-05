@@ -26,8 +26,9 @@ fi
 
 # ---------- Nomes dos recursos ----------
 SUF=${SUF:-$RANDOM}
-RG=${RG:-rg-dimdim-cp5-eus}
-LOC=${LOC:-eastus}
+RG=${RG:-rg-dimdim-cp5}
+LOC=${LOC:-brazilsouth}        # SQL, Key Vault, App Insights
+APP_LOC=${APP_LOC:-eastus}    # App Service (Plan + Web App)
 SQL_SERVER=sql-dimdim-$SUF
 SQL_DB=dimdimdb
 PLAN=plan-dimdim
@@ -57,8 +58,8 @@ az monitor log-analytics workspace create -g "$RG" -n "$LAW" -l "$LOC" --query "
 az monitor app-insights component create -g "$RG" -a "$AI" -l "$LOC" --workspace "$LAW" --kind web --query "{Nome:name, Status:provisioningState}" -o table
 AI_CS=$(az monitor app-insights component show -g "$RG" -a "$AI" --query connectionString -o tsv)
 
-echo ">> [4/7] App Service Plan + Web App (Linux, Java 17)"
-az appservice plan create -g "$RG" -n "$PLAN" -l "$LOC" --sku B1 --is-linux -o table
+echo ">> [4/7] App Service Plan + Web App (Linux, Java 17) em $APP_LOC"
+az appservice plan create -g "$RG" -n "$PLAN" -l "$APP_LOC" --sku B1 --is-linux -o table
 az webapp create -g "$RG" -p "$PLAN" -n "$APP" --runtime "JAVA:17-java17" -o table
 
 echo ">> [5/7] Managed Identity do Web App"

@@ -7,7 +7,7 @@
 # Uso: ./03-github-secrets.sh
 # =============================================================================
 set -euo pipefail
-RG=${RG:-rg-dimdim-cp5-eus}
+RG=${RG:-rg-dimdim-cp5}
 SUB=$(az account show --query id -o tsv)
 az ad sp create-for-rbac --name sp-dimdim-gha --role contributor \
   --scopes "/subscriptions/$SUB/resourceGroups/$RG" --sdk-auth

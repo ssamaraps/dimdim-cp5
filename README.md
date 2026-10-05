@@ -19,7 +19,7 @@ A solução é uma aplicação **web com front-end** (não é API) feita em **Ja
 
 - **2 tabelas relacionadas** no **Azure SQL Database (PaaS)**: `clientes` (1) → (N) `contas` (FK `cliente_id`);
 - **CRUD completo nas duas tabelas** pela interface web (cadastrar, listar, editar e excluir);
-- Hospedagem no **Azure App Service** (Linux, Java 17);
+- Hospedagem no **Azure App Service** (Linux, Java 17), na região **East US**;
 - **Azure Key Vault** guardando a senha do banco, lida pelo App Service via **Managed Identity** (Key Vault reference);
 - Configurações de conexão em **variáveis de ambiente** (App Settings), nenhum segredo no código;
 - **Application Insights** (agente Java) monitorando requisições, falhas e as **dependências SQL** (transações no banco);
@@ -83,15 +83,17 @@ chmod +x *.sh ../mvnw
 ```
 O script **pede o usuário e a senha** do banco no terminal (a senha não aparece na tela e não fica salva em arquivo) e cria:
 
-1. Resource Group `rg-dimdim-cp5-eus` (região East US);
-2. Azure SQL Server + Database `dimdimdb` (tier Basic) e regras de firewall;
-3. Log Analytics + Application Insights `ai-dimdim`;
-4. App Service Plan B1 Linux + Web App Java 17;
+1. Resource Group `rg-dimdim-cp5`;
+2. Azure SQL Server + Database `dimdimdb` (tier Basic) e regras de firewall – região **Brazil South**;
+3. Log Analytics + Application Insights `ai-dimdim` – Brazil South;
+4. App Service Plan B1 Linux + Web App Java 17 – região **East US**;
 5. Managed Identity no Web App;
-6. Key Vault com o secret `sql-password` e permissão `get/list` para a identidade do app;
+6. Key Vault com o secret `sql-password` e permissão `get/list` para a identidade do app – Brazil South;
 7. App Settings: `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` (= `@Microsoft.KeyVault(...)`), `APPLICATIONINSIGHTS_CONNECTION_STRING` e ativação do agente Java.
 
 No final, o script mostra o **nome do Web App** e a **URL**. Guarde esses valores.
+
+> **Regiões:** os dados (SQL, Key Vault, App Insights) ficam em **Brazil South** e o App Service em **East US**, pois a assinatura Azure for Students restringe/limita a criação de recursos por região. As regiões podem ser alteradas pelas variáveis `LOC` e `APP_LOC` (ex.: `LOC=brazilsouth APP_LOC=brazilsouth ./02-provision.sh`).
 
 ### Passo 3 – Criar as tabelas
 Portal Azure → SQL Database `dimdimdb` → **Query editor** → login com o usuário/senha do banco
@@ -156,5 +158,5 @@ Monitoramento do banco também no próprio **Azure SQL Database → Monitorament
 
 ## 9. Limpeza dos recursos
 ```bash
-az group delete -n rg-dimdim-cp5-eus --yes --no-wait
+az group delete -n rg-dimdim-cp5 --yes --no-wait
 ```
