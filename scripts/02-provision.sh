@@ -12,6 +12,7 @@
 # SQL_USER e SQL_PASSWORD, se já estiverem definidas.
 # =============================================================================
 set -euo pipefail
+az config set extension.use_dynamic_install=yes_without_prompt -o none 2>/dev/null || true
 
 # ---------- Credenciais do banco (fora do código-fonte) ----------
 if [ -z "${SQL_USER:-}" ]; then
@@ -38,7 +39,7 @@ az group create -n "$RG" -l "$LOC" -o table
 
 echo ">> [2/7] Azure SQL Server + Database (PaaS)"
 az sql server create -g "$RG" -n "$SQL_SERVER" -l "$LOC" -u "$SQL_USER" -p "$SQL_PASSWORD" -o table
-az sql db create -g "$RG" -s "$SQL_SERVER" -n "$SQL_DB" --service-objective Basic -o table
+az sql db create -g "$RG" -s "$SQL_SERVER" -n "$SQL_DB" --service-objective Basic --backup-storage-redundancy Local -o table
 # Libera serviços da Azure (App Service) a acessar o banco
 az sql server firewall-rule create -g "$RG" -s "$SQL_SERVER" -n AllowAzure \
   --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0 -o table
@@ -50,8 +51,8 @@ if [ -n "$MYIP" ]; then
 fi
 
 echo ">> [3/7] Application Insights (workspace-based)"
-az monitor log-analytics workspace create -g "$RG" -n "$LAW" -l "$LOC" -o table
-az monitor app-insights component create -g "$RG" -a "$AI" -l "$LOC" --workspace "$LAW" --kind web -o table
+az monitor log-analytics workspace create -g "$RG" -n "$LAW" -l "$LOC" --query "{Nome:name, Status:provisioningState}" -o table
+az monitor app-insights component create -g "$RG" -a "$AI" -l "$LOC" --workspace "$LAW" --kind web --query "{Nome:name, Status:provisioningState}" -o table
 AI_CS=$(az monitor app-insights component show -g "$RG" -a "$AI" --query connectionString -o tsv)
 
 echo ">> [4/7] App Service Plan + Web App (Linux, Java 17)"
