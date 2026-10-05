@@ -42,13 +42,13 @@ A solução é uma aplicação **web com front-end** (não é API) feita em **Ja
 ## 3. Estrutura do repositório
 
 ```
-├── .github/workflows/deploy.yml   # (opcional) pipeline GitHub Actions: build + deploy
+├── .github/workflows/deploy.yml   # (opcional) GitHub Actions, execução manual: build + deploy
 ├── docs/arquitetura.png           # desenho macro da arquitetura
 ├── scripts/
 │   ├── 01-create-tables.sql       # DDL das tabelas (clientes, contas)
 │   ├── 02-provision.sh            # Azure CLI: cria TODOS os recursos
-│   ├── 03-github-secrets.sh       # Azure CLI: Service Principal do pipeline
-│   ├── 04-deploy-manual.sh        # Azure CLI: deploy alternativo (az webapp deploy)
+│   ├── 03-github-secrets.sh       # Azure CLI: Service Principal do GitHub Actions (opcional)
+│   ├── 04-deploy-manual.sh        # Azure CLI: build + deploy (az webapp deploy)
 │   ├── 05-selects-video.sql       # SELECTs de evidência (antes/depois do CRUD)
 │   └── 06-seed.sql                # dados iniciais (opcional)
 ├── src/main/java/...              # models, repositories, controllers
@@ -67,14 +67,14 @@ A solução é uma aplicação **web com front-end** (não é API) feita em **Ja
 
 ### Pré-requisitos
 - Assinatura Azure ativa;
-- Conta no GitHub com um fork/cópia deste repositório;
+- Acesso a este repositório no GitHub;
 - **Azure Cloud Shell (Bash)** no portal (já vem com `az`, `git`, `java` e `curl`). Pode ser o Azure CLI local também.
 
 ### Passo 1 – Clonar o repositório no Cloud Shell
 ```bash
-git clone https://github.com/<usuario>/dimdim-cp5.git
+git clone https://github.com/ssamaraps/dimdim-cp5.git
 cd dimdim-cp5/scripts
-chmod +x *.sh
+chmod +x *.sh ../mvnw
 ```
 
 ### Passo 2 – Criar todos os recursos na Azure
@@ -95,7 +95,7 @@ No final, o script mostra o **nome do Web App** e a **URL**. Guarde esses valore
 
 ### Passo 3 – Criar as tabelas
 Portal Azure → SQL Database `dimdimdb` → **Query editor** → login com o usuário/senha do banco
-(se pedir, clique em *Allowlist IP* para liberar o seu IP) → cole e execute `scripts/01-create-tables.sql`.
+(se aparecer erro de IP, clique em **Permitir IP ... no servidor** para liberar o seu IP no firewall) → cole e execute `scripts/01-create-tables.sql`.
 Opcional: execute `scripts/06-seed.sql` para ter dados iniciais.
 
 ### Passo 4 – Deploy automatizado (Azure CLI + az webapp deploy)
@@ -106,8 +106,8 @@ Ainda no Cloud Shell, dentro da pasta `scripts`:
 O script compila a aplicação com Maven (`mvnw clean package`) e publica o `dimdim.jar` no App Service com `az webapp deploy`.
 No final, mostra a URL da aplicação.
 
-### Passo 5 – (Opcional) Deploy contínuo com GitHub Actions
-O repositório também possui o workflow `.github/workflows/deploy.yml`, que faz o build e o deploy a cada `push` na `main`. Para ativá-lo:
+### Passo 5 – (Opcional) Deploy com GitHub Actions
+O repositório também possui o workflow `.github/workflows/deploy.yml` (execução manual), que faz o build e o deploy no App Service. Para usá-lo:
 ```bash
 ./03-github-secrets.sh
 ```
@@ -118,7 +118,7 @@ Copie o JSON exibido (é sigiloso, não compartilhe) e no GitHub vá em **Settin
 | `AZURE_CREDENTIALS` | JSON gerado pelo `03-github-secrets.sh` |
 | `AZURE_WEBAPP_NAME` | nome do Web App exibido no Passo 2 (ex.: `app-dimdim-12345`) |
 
-Depois, faça um `git push` na `main` ou use *Actions → Deploy DimDim → Run workflow*.
+Depois, execute em *Actions → Deploy DimDim → Run workflow*.
 
 ### Passo 6 – Validar
 1. Abra `https://<nome-do-webapp>.azurewebsites.net` (a primeira carga pode levar ~1 min).
@@ -140,7 +140,7 @@ Para cada operação, nas duas tabelas: **SELECT antes → operação na aplica�
 - Os valores ficam nas **variáveis de ambiente** do App Service;
 - A **senha** do banco fica no **Azure Key Vault** e é lida via **Managed Identity** (Key Vault reference);
 - Usuário/senha do banco são informados no terminal na hora do provisionamento, e não ficam nos scripts;
-- As credenciais do pipeline ficam em **GitHub Secrets**.
+- As credenciais do GitHub Actions (opcional) ficam em **GitHub Secrets**.
 
 ## 8. Monitoramento – Application Insights
 
