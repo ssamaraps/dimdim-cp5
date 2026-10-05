@@ -12,6 +12,8 @@
 # SQL_USER e SQL_PASSWORD, se já estiverem definidas.
 # =============================================================================
 set -euo pipefail
+
+# Instala extensões da CLI sem perguntar (ex.: application-insights)
 az config set extension.use_dynamic_install=yes_without_prompt -o none 2>/dev/null || true
 
 # ---------- Credenciais do banco (fora do código-fonte) ----------
@@ -24,8 +26,8 @@ fi
 
 # ---------- Nomes dos recursos ----------
 SUF=${SUF:-$RANDOM}
-RG=${RG:-rg-dimdim-cp5}
-LOC=${LOC:-brazilsouth}
+RG=${RG:-rg-dimdim-cp5-eus}
+LOC=${LOC:-eastus}
 SQL_SERVER=sql-dimdim-$SUF
 SQL_DB=dimdimdb
 PLAN=plan-dimdim
